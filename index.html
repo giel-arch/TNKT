@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024, initial-scale=1.0">
+    <title>TNKT - PEH Database</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-dark: #047857;
+            --secondary: #0f766e;
+            --background: #f0fdf4;
+            --surface: #ffffff;
+            --text: #064e3b;
+            --text-light: #065f46;
+            --border: #a7f3d0;
+            --success: #22c55e;
+            --error: #ef4444;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        header {
+            background-color: var(--surface);
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+            transform: translateX(-100%);
+            animation: slideIn 0.5s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease-out;
+            animation-delay: 0.2s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.3s; }
+        .stat-card:nth-child(2) { animation-delay: 0.4s; }
+        .stat-card:nth-child(3) { animation-delay: 0.5s; }
+        .stat-card:nth-child(4) { animation-delay: 0.6s; }
+        .stat-card:nth-child(5) { animation-delay: 0.7s; }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .form-container {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease-out;
+            animation-delay: 0.8s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            position: relative;
+            display: inline-block;
+        }
+
+        .form-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: lineGrow 0.5s ease-out forwards;
+            animation-delay: 1s;
+        }
+
+        @keyframes lineGrow {
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.5s ease-out forwards;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 1.1s; }
+        .form-group:nth-child(2) { animation-delay: 1.2s; }
+        .form-group:nth-child(3) { animation-delay: 1.3s; }
+        .form-group:nth-child(4) { animation-delay: 1.4s; }
+        .form-group:nth-child(5) { animation-delay: 1.5s; }
+        .form-group:nth-child(6) { animation-delay: 1.6s; }
+        .form-group:nth-child(7) { animation-delay: 1.7s; }
+        .form-group:nth-child(8) { animation-delay: 1.8s; }
+        .form-group:nth-child(9) { animation-delay: 1.9s; }
+        .form-group:nth-child(10) { animation-delay: 2s; }
+        .form-group:nth-child(11) { animation-delay: 2.1s; }
+        .form-group:nth-child(12) { animation-delay: 2.2s; }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group:has(.select-wrapper) {
+            z-index: 2;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Enhanced Custom Select */
+        .select-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        .select-trigger {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .select-trigger::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 0;
+        }
+
+        .select-trigger:hover::before {
+            opacity: 0.1;
+        }
+
+        .select-trigger span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .select-trigger::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--text);
+            transition: transform 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .select-trigger.open::after {
+            transform: rotate(180deg);
+        }
+
+        .select-options {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 9999;
+            display: block;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px) scaleY(0.98);
+            transition: opacity 0.25s cubic-bezier(.4,0,.2,1), transform 0.25s cubic-bezier(.4,0,.2,1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .select-options.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scaleY(1);
+        }
+
+        .select-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .select-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .select-option:hover::before {
+            opacity: 0.1;
+        }
+
+        .select-option span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Enhanced Custom Date Picker */
+        .date-picker-wrapper {
+            position: relative;
+        }
+
+        .date-picker-trigger {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .date-picker-trigger::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .date-picker-trigger:hover::before {
+            opacity: 0.1;
+        }
+
+        .date-picker-trigger span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-picker-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .date-picker-modal.open {
+            display: block;
+            opacity: 1;
+        }
+
+        .date-picker-content {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow);
+            position: relative;
+            margin: 2rem auto;
+            overflow: visible;
+        }
+
+        .date-picker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .date-picker-nav {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .date-picker-nav button {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text);
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .date-picker-nav button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .date-picker-nav button:hover::before {
+            opacity: 0.1;
+        }
+
+        .date-picker-nav button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-picker-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: var(--radius);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .date-picker-day::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .date-picker-day:hover::before {
+            opacity: 0.1;
+        }
+
+        .date-picker-day span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-picker-day.selected {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .date-picker-day.today {
+            border: 2px solid var(--primary);
+        }
+
+        .date-picker-day.disabled {
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .date-picker-day.disabled:hover::before {
+            opacity: 0;
+        }
+
+        @media (max-width: 768px) {
+            .date-picker-modal {
+                padding: 0;
+            }
+
+            .date-picker-content {
+                margin: 1rem;
+                border-radius: var(--radius);
+                max-height: none;
+                overflow: visible;
+            }
+
+            .date-picker-grid {
+                gap: 0.25rem;
+            }
+
+            .date-picker-day {
+                font-size: 0.875rem;
+                min-height: 40px;
+            }
+        }
+
+        .submit-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+
+        .submit-button:hover::before {
+            transform: translateX(0);
+        }
+
+        .submit-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 10000;
+            max-width: 90%;
+            width: 400px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-message i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .success-message h3 {
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .success-message p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .success-message button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .success-message button:hover {
+            background: var(--primary-dark);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* Prevent body scroll when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* Add backdrop for mobile selectors */
+        .select-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .select-backdrop.visible {
+            display: block;
+        }
+
+        /* Bouncing Ball Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--background);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .bouncing-ball {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            top: -100px;
+            animation: bounce 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards,
+                       expand 1s ease-out 1.5s forwards;
+            box-shadow: 0 0 20px rgba(5, 150, 105, 0.3);
+        }
+
+        .content-wrapper {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease-out;
+        }
+
+        .content-wrapper.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        @keyframes bounce {
+            0% {
+                top: -100px;
+                transform: scale(1);
+            }
+            50% {
+                top: 50%;
+                transform: scale(1);
+            }
+            75% {
+                top: 45%;
+                transform: scale(1);
+            }
+            100% {
+                top: 50%;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes expand {
+            0% {
+                transform: scale(1);
+                border-radius: 50%;
+            }
+            100% {
+                transform: scale(100);
+                border-radius: 0;
+            }
+        }
+
+        .loading-text {
+            position: absolute;
+            bottom: 40%;
+            font-size: 1.2rem;
+            color: var(--text);
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 2.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Date Input Styles */
+        .date-input-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .date-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .date-input-wrapper label {
+            font-size: 0.875rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .date-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .date-input::-webkit-inner-spin-button,
+        .date-input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .date-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Mobile Portrait Mode Adjustments */
+        @media (max-width: 480px) {
+            .date-input-group {
+                gap: 0.5rem;
+                padding: 0;
+                width: 100%;
+            }
+
+            .date-input-wrapper {
+                width: 100%;
+            }
+
+            .date-input-wrapper label {
+                font-size: 0.75rem;
+            }
+
+            .date-input {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .form-group {
+                padding: 0 1rem;
+            }
+        }
+
+        /* Fix for selectors */
+        .custom-select {
+            position: relative;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .select-options {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 9999;
+            display: block;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px) scaleY(0.98);
+            transition: opacity 0.25s cubic-bezier(.4,0,.2,1), transform 0.25s cubic-bezier(.4,0,.2,1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .select-options.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scaleY(1);
+        }
+
+        .option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .option:hover {
+            background: var(--primary-light);
+        }
+
+        .select-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .select-trigger:hover {
+            border-color: var(--primary);
+        }
+
+        .select-trigger.open {
+            border-color: var(--primary);
+        }
+
+        /* Form group z-index handling */
+        .form-group {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group:hover {
+            z-index: 2;
+        }
+
+        .form-group .custom-select {
+            z-index: 2;
+        }
+
+        .form-group .select-options {
+            z-index: 9999;
+        }
+
+        /* Updated Submit Button Style */
+        .form-actions {
+            margin-top: 2rem;
+            padding: 0 1rem;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-submit:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .btn-submit i {
+            font-size: 1.1rem;
+        }
+
+        .success-message {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--success);
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Link Input Styles */
+        .link-input-container {
+            margin-top: 0.5rem;
+        }
+
+        .link-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .link-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .link-input::placeholder {
+            color: var(--text-light);
+        }
+
+        .link-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .link-info i {
+            color: var(--primary);
+        }
+
+        /* File Upload Styles */
+        .file-upload-container {
+            margin-top: 0.5rem;
+        }
+
+        .upload-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .upload-area {
+            flex: 1;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            position: relative;
+            min-width: 200px;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .upload-area i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area p {
+            margin: 0;
+            color: var(--text-light);
+        }
+
+        .upload-area input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-list {
+            flex: 1;
+            min-width: 200px;
+            max-width: 400px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .file-item:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .file-item .file-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            word-break: break-all;
+            color: var(--text);
+        }
+
+        .file-item .remove-file {
+            color: var(--danger);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .file-item .remove-file:hover {
+            color: var(--danger-dark);
+            background: var(--danger-light);
+        }
+
+        @media (max-width: 768px) {
+            .upload-wrapper {
+                flex-direction: column;
+            }
+            
+            .file-list {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay">
+        <div class="bouncing-ball"></div>
+        <div class="loading-text">TNKT - PEH Database</div>
+    </div>
+
+    <div class="content-wrapper">
+        <header>
+            <div class="container header-content">
+                <a href="#" class="logo">TNKT - PEH Database</a>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="form-container">
+                <h1 class="form-title">Input Data PEH</h1>
+                
+                <div class="overlay" id="overlay"></div>
+                <div class="success-message" id="successMessage">
+                    <div class="success-content">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Data Berhasil Dikirim!</h3>
+                        <p>Terima kasih telah mengirimkan data.</p>
+                        <button onclick="hideSuccessMessage()">Tutup</button>
+                    </div>
+                </div>
+                
+                <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+                    <input type="text" name="nama_pengisi" />
+                    <input type="text" name="nama_ilmiah" />
+                    <input type="text" name="nama_lokal" />
+                    <input type="text" name="jenis" />
+                    <input type="text" name="nama_spesies" />
+                    <input type="text" name="status_konservasi" />
+                    <input type="text" name="habitat" />
+                    <input type="text" name="seksi" />
+                    <input type="text" name="tahun_bulan_hari" />
+                    <input type="number" name="jumlah" />
+                    <textarea name="catatan"></textarea>
+                    <input type="file" name="file" />
+                </form>
+
+                <form id="speciesForm" name="contact" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="form-name" value="contact" />
+                    <div class="form-header">
+                        <h2>Input Data Spesies</h2>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nama_pengisi">Nama Pengisi Data</label>
+                            <input type="text" id="nama_pengisi" name="nama_pengisi" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nama_ilmiah">Nama Latin</label>
+                            <input type="text" id="nama_ilmiah" name="nama_ilmiah" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nama_lokal">Nama Lokal</label>
+                            <input type="text" id="nama_lokal" name="nama_lokal" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jenis">Jenis</label>
+                            <input type="text" id="jenis" name="jenis" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nama_spesies">Koordinat</label>
+                            <input type="text" id="nama_spesies" name="nama_spesies" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status_konservasi">Status Konservasi</label>
+                            <div class="custom-select">
+                                <div class="select-trigger" data-target="status_konservasi">
+                                    <span>Pilih Status</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="select-options" id="status_konservasi">
+                                    <div class="option" data-value="Kritis (CR)">Kritis (CR)</div>
+                                    <div class="option" data-value="Terancam (EN)">Terancam (EN)</div>
+                                    <div class="option" data-value="Rentan (VU)">Rentan (VU)</div>
+                                    <div class="option" data-value="Hampir Terancam (NT)">Hampir Terancam (NT)</div>
+                                    <div class="option" data-value="Berisiko Rendah (LC)">Berisiko Rendah (LC)</div>
+                                    <div class="option" data-value="Kurang Data (DD)">Kurang Data (DD)</div>
+                                    <div class="option" data-value="Tidak Dievaluasi (NE)">Tidak Dievaluasi (NE)</div>
+                                </div>
+                                <input type="hidden" name="status_konservasi" id="statusKonservasiInput" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="habitat">Habitat</label>
+                            <input type="text" id="habitat" name="habitat" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="seksi">Seksi</label>
+                            <div class="custom-select">
+                                <div class="select-trigger" data-target="seksi">
+                                    <span>Pilih Seksi</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="select-options" id="seksi">
+                                    <div class="option" data-value="Seksi I">Seksi I</div>
+                                    <div class="option" data-value="Seksi II">Seksi II</div>
+                                    <div class="option" data-value="Seksi III">Seksi III</div>
+                                </div>
+                                <input type="hidden" name="seksi" id="seksiInput" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tahun">Tahun, Bulan, Hari:</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="number" id="tahun" name="tahun" placeholder="Tahun" min="0">
+                                <input type="number" id="bulan" name="bulan" placeholder="Bulan" min="1" max="12">
+                                <input type="number" id="hari" name="hari" placeholder="Hari" min="1" max="31">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jumlah">Jumlah</label>
+                            <input type="number" id="jumlah" name="jumlah" required placeholder="Masukkan Jumlah...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="catatan">Keterangan</label>
+                            <textarea id="catatan" name="catatan" rows="3" placeholder="Tambahkan Catatan"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="file">File</label>
+                            <div class="file-upload-container">
+                                <div class="upload-wrapper">
+                                    <div class="upload-area" id="uploadArea">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>Drag & drop file di sini atau klik untuk memilih file</p>
+                                        <input type="file" id="file" name="file" multiple>
+                                    </div>
+                                    <div id="fileList" class="file-list"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i>
+                            Kirim Data Spesies
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <div class="date-picker-modal" id="datePickerModal">
+            <div class="date-picker-content">
+                <div class="date-picker-header">
+                    <div class="date-picker-nav">
+                        <button id="prevMonth">&lt;</button>
+                        <button id="nextMonth">&gt;</button>
+                    </div>
+                    <span id="currentMonthYear"></span>
+                </div>
+                <div class="date-picker-grid" id="datePickerGrid"></div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="container">
+                <p>&copy; 2024 Balai Taman Nasional Kepulauan Togean. Semua Hak Dilindungi.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Bouncing Ball Animation
+        window.addEventListener('load', () => {
+            const loadingOverlay = document.querySelector('.loading-overlay');
+            const contentWrapper = document.querySelector('.content-wrapper');
+            
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                contentWrapper.classList.add('visible');
+            }, 3000);
+        });
+
+        // Data Management
+        let speciesData = [];
+        let currentDate = new Date();
+        let selectedDate = null;
+
+        const monthNames = [
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+
+        // Enhanced Custom Select Implementation
+        document.querySelectorAll('.custom-select').forEach(select => {
+            const trigger = select.querySelector('.select-trigger');
+            const options = select.querySelector('.select-options');
+            const input = select.querySelector('input[type="hidden"]');
+            const optionsList = options.querySelectorAll('.option');
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = options.classList.contains('open');
+                
+                // Close all other selectors
+                document.querySelectorAll('.select-options.open').forEach(opt => {
+                    if (opt !== options) {
+                        opt.classList.remove('open');
+                        opt.previousElementSibling.classList.remove('open');
+                    }
+                });
+
+                options.classList.toggle('open');
+                trigger.classList.toggle('open');
+            });
+
+            optionsList.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const value = option.dataset.value;
+                    input.value = value;
+                    trigger.querySelector('span').textContent = value;
+                    options.classList.remove('open');
+                    trigger.classList.remove('open');
+                });
+            });
+        });
+
+        // Close selectors when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.custom-select')) {
+                document.querySelectorAll('.select-options.open').forEach(options => {
+                    options.classList.remove('open');
+                    options.previousElementSibling.classList.remove('open');
+                });
+            }
+        });
+
+        // Date Input Implementation
+        const tahunInput = document.getElementById('tahun');
+        const bulanInput = document.getElementById('bulan');
+        const hariInput = document.getElementById('hari');
+
+        // Set current date as default
+        const today = new Date();
+        tahunInput.value = today.getFullYear();
+        bulanInput.value = today.getMonth() + 1;
+        hariInput.value = today.getDate();
+
+        // Validate date inputs
+        function validateDateInput(input, min, max) {
+            let value = parseInt(input.value);
+            if (isNaN(value)) {
+                input.value = '';
+                return;
+            }
+            if (value < min) input.value = min;
+            if (value > max) input.value = max;
+        }
+
+        // Validate month length based on year and month
+        function validateDayInput() {
+            const year = parseInt(tahunInput.value);
+            const month = parseInt(bulanInput.value);
+            const day = parseInt(hariInput.value);
+            
+            if (isNaN(year) || isNaN(month) || isNaN(day)) return;
+            
+            const lastDay = new Date(year, month, 0).getDate();
+            if (day > lastDay) {
+                hariInput.value = lastDay;
+            }
+        }
+
+        tahunInput.addEventListener('change', () => {
+            validateDateInput(tahunInput, 1900, 2100);
+            validateDayInput();
+        });
+
+        bulanInput.addEventListener('change', () => {
+            validateDateInput(bulanInput, 1, 12);
+            validateDayInput();
+        });
+
+        hariInput.addEventListener('change', () => {
+            validateDateInput(hariInput, 1, 31);
+            validateDayInput();
+        });
+
+        // Format date for form submission
+        function formatDateForSubmit() {
+            const year = tahunInput.value.padStart(4, '0');
+            const month = bulanInput.value.padStart(2, '0');
+            const day = hariInput.value.padStart(2, '0');
+            return `${day}-${month}-${year}`;
+        }
+
+        // Form Submission
+        const form = document.getElementById('speciesForm');
+        const successMessage = document.getElementById('successMessage');
+
+        // Success Message Handling
+        function showSuccessMessage() {
+            document.getElementById('overlay').classList.add('show');
+            document.getElementById('successMessage').classList.add('show');
+        }
+
+        function hideSuccessMessage() {
+            document.getElementById('overlay').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        // Update select option function
+        function selectOption(element, value) {
+            const select = element.closest('.custom-select');
+            const trigger = select.querySelector('.select-trigger span');
+            const input = select.querySelector('input');
+            
+            // Update display
+            trigger.textContent = value;
+            
+            // Update hidden input
+            input.value = value;
+            
+            // Close dropdown
+            const options = select.querySelector('.select-options');
+            options.classList.remove('open');
+            select.querySelector('.select-trigger').classList.remove('open');
+            
+            // Remove active class from all options
+            select.querySelectorAll('.select-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            
+            // Add active class to selected option
+            element.classList.add('active');
+        }
+
+        // Form Submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitButton = form.querySelector('.btn-submit');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            
+            try {
+                // Buat FormData untuk mengirim data dan file
+                const formData = new FormData(form);
+                
+                // Gabungkan tahun, bulan, hari
+                const tahun = form.tahun.value || '';
+                const bulan = form.bulan.value || '';
+                const hari = form.hari.value || '';
+                formData.append('tahun_bulan_hari', [tahun, bulan, hari].join('_'));
+                
+                // Kirim ke Netlify
+                const response = await fetch('/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    showSuccessMessage();
+                    form.reset();
+                    fileList.innerHTML = '';
+                    
+                    // Reset semua custom select
+                    document.querySelectorAll('.custom-select .select-trigger span').forEach(span => {
+                        span.textContent = span.textContent.includes('Pilih') ? span.textContent : 'Pilih ' + span.textContent.split(' ')[0];
+                    });
+                    document.querySelectorAll('.custom-select input[type="hidden"]').forEach(input => {
+                        input.value = '';
+                    });
+                } else {
+                    throw new Error('Gagal mengirim data');
+                }
+            } catch (error) {
+                console.error('Form submission error:', error);
+                alert('Terjadi kesalahan saat mengirim data. Silakan coba lagi.');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data Spesies';
+            }
+        });
+
+        // URL validation function
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // Statistics Update
+        function updateStats() {
+            const stats = {
+                flora: 0,
+                fauna: 0,
+                seksi1: 0,
+                seksi2: 0,
+                seksi3: 0
+            };
+
+            speciesData.forEach(entry => {
+                if (entry.jenis === 'Flora') stats.flora++;
+                if (entry.jenis === 'Fauna') stats.fauna++;
+                if (entry.seksi === 'I') stats.seksi1++;
+                if (entry.seksi === 'II') stats.seksi2++;
+                if (entry.seksi === 'III') stats.seksi3++;
+            });
+
+            document.getElementById('floraCount').textContent = stats.flora;
+            document.getElementById('faunaCount').textContent = stats.fauna;
+        }
+
+        // Initialize
+        updateStats();
+
+        // File Upload Handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('file');
+        const fileList = document.getElementById('fileList');
+
+        // Handle file selection
+        fileInput.addEventListener('change', handleFiles);
+
+        // Handle drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('dragover');
+            handleFiles({ target: { files: e.dataTransfer.files } });
+        });
+
+        function handleFiles(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                // Clear existing files
+                fileList.innerHTML = '';
+                // Add new files
+                for (let file of files) {
+                    addFileToList(file);
+                }
+            }
+        }
+
+        function addFileToList(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileName = document.createElement('span');
+            fileName.className = 'file-name';
+            fileName.textContent = file.name;
+            
+            const removeButton = document.createElement('span');
+            removeButton.className = 'remove-file';
+            removeButton.innerHTML = '<i class="fas fa-times"></i>';
+            removeButton.onclick = () => {
+                fileItem.remove();
+                fileInput.value = '';
+            };
+            
+            fileItem.appendChild(fileName);
+            fileItem.appendChild(removeButton);
+            fileList.appendChild(fileItem);
+        }
+    </script>
+</body>
+</html> 
